@@ -1,5 +1,6 @@
 from freehand.core.base.middleware.mid_string.mid_string_clean import StringMiddleware
 import jieba
+import jieba.posseg as psg
 
 class Base_Cleaner:
     def process_steps(self, content):
@@ -37,7 +38,7 @@ class BaseUtil_Handle_Text:
         :param word_lis: 待处理的文本
         :return: 清除停用词后的列表
         """
-        return [word for word in word_generator if word not in stopword_set]
+        return [(word, word_tag) for word, word_tag in word_generator if word not in stopword_set]
 
     @classmethod
     def clean_webtag(cls, content):
@@ -70,9 +71,45 @@ class BaseUtil_Handle_Text:
         return unrelative_re_obj.sub('', content)
 
     @classmethod
-    def cut_word(cls, content)->list:
+    def cut_word(cls, content, check_wordtag=False)->object:
         """文本分词
         :param content: 经过清洗的文本
+        :param check_wordtag: 是否需要获取词性
         :return: 分词结果生成器
         """
-        return jieba.cut(content)
+        if(check_wordtag):
+            return psg.cut(content)
+        else:
+            return jieba.cut(content)
+
+    @classmethod
+    def filterby_wordtag(cls, word_lis:list, wordtag_lis:list=['n', 'eng', 'nz', 'm', 'l'])->list:
+        """ 根据词性过滤词列表 默认筛出名词
+        词性： 名称 n 英文 eng 其它专名 nz 量词 m 习用语 l 名动词 vn 动词 v
+        :param word_lis: 词列表 [(词语, 词性)]
+        :param wordtag_lis: 筛选出指定词性的词 列表
+        :return: output_lis
+        """
+        output_lis = []
+        for word, tag in word_lis:
+            if(tag in wordtag_lis):
+                output_lis.append((word, tag))
+        return output_lis
+
+    @classmethod
+    def count_word_num(cls, word_lis)->list:
+        """ 词频统计 输出列表结果 [(词, 数量)]
+        :param word_lis: 列表里包含重复的词，通过计数统计词频
+        :return: output_lis
+        """
+        output_lis = []
+        duplicated_word_lis = []
+        unduplicated_word_lis = set()
+        for word, tag in word_lis:
+            duplicated_word_lis.append(word)
+            unduplicated_word_lis.add(word)
+        for w in unduplicated_word_lis:
+            word_num = duplicated_word_lis.count(w)
+            output_lis.append((w, word_num))
+        output_lis = sorted(output_lis, key=lambda x:x[1], reverse=True)
+        return output_lis
