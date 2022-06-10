@@ -2,7 +2,6 @@
 from core.base.task.base import Base_Task
 from core.decorator.common import singleton
 from core.base.preprocessing.base import BaseUtil_Handle_Text
-from core.decorator.common import stopwatch
 from preprocessing.pre_text.cleaner import Cleaner_Text
 from static.word_dicts.financial_word_dic import TITLE_TAG
 import os

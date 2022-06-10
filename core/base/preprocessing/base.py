@@ -1,6 +1,6 @@
-from freehand.core.base.middleware.mid_string.mid_string_clean import StringMiddleware
 import jieba
 import jieba.posseg as psg
+import re
 
 class Base_Cleaner:
     def process_steps(self, content):
@@ -41,13 +41,30 @@ class BaseUtil_Handle_Text:
         return [(word, word_tag) for word, word_tag in word_generator if word not in stopword_set]
 
     @classmethod
-    def clean_webtag(cls, content):
+    def clean_between(cls, s, s_left, s_right):
+        """去除字符串中指定左右间的内容
+            如： s = '财讯网（记者 XXX）AAAAA'     #去除（记者 XXX）
+                s = del_content_between(s, s_left='（记者', s_right='）')
+        :param s: 待清洗的内容
+        :param s_left: 左匹配
+        :param s_right: 右匹配
+        :return cleaned_content: 清洗完成的结果
         """
-        清洗html标签
+        try:
+            r_rule = u"\\" + s_left + u".*?" + s_right
+            cleaned_s = re.sub(r_rule, "", s)
+        except Exception as e:
+            r_rule = u"\\" + s_left + u".*?" + "\\" + s_right
+            cleaned_s = re.sub(r_rule, "", s)
+        return cleaned_s
+
+    @classmethod
+    def clean_webtag(cls, content):
+        """清洗html标签
         :param content: 待清洗的内容
         :return cleaned_content: 清洗完成的结果
         """
-        cleaned_content = StringMiddleware.clean_between(content, s_left='<', s_right='>')
+        cleaned_content = cls.clean_between(content, s_left='<', s_right='>')
         return cleaned_content
 
     @classmethod
