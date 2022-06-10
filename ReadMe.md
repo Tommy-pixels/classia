@@ -6,9 +6,23 @@
     - 能够通过方差分析，进行特征选择。【验证性统计分析】
     - 能够根据文本内容，对文本数据进行分类。【统计建模】
 
-## 2、自定义任务
+## 2、工具
+### 1 方法计时器 统计实处方法执行时间
+    from core.decorator.common import stopwatch
+    @stopwatch
+    def func(*args, *kwargs):
+        pass
+### 2 单例 将指定类设置为单例
+    from core.decorator.common import singleton
+    @singleton
+    class Singleton:
+        pass
+
+## 3、自定义任务
 ### 1 文本（文章）分类 - 金融文本文章
     采用方法：传统方法
+        文本预处理 - 提取特征 - 特征输入分类器 - 输出结果
+        目前本任务中 特征为分词统计结果，对特征的分类采用 词匹配的方式，自定义选择特征比例进行匹配分类，分类步骤跟传统方法采用的分类器方法有差异，后续再继续改进优化。
     - jieba 分词词性
         '股票': 名词 n
         '港股': 名词 n
@@ -38,7 +52,7 @@
             或者通过引用其它自定义类型的分类静态资源文件 from static.word_dicts.fincial_word_dic import TITLE_TAG
             另外需要根据新增的不同词的不同词性在任务类里的分词过滤那里做修改，否则可能因为找不到对应分词而分类失败
 
-## 3、具体使用
+## 4、具体使用
 ### 1 文本分类 
     本任务参数说明：
         content:str, stopwords_path=r'E:\Projects\classia\static\stopwords\baidu_stopwords.txt', default_tag:str='行情', classification_ciping_pattern:str='len', default_ciping_ratio:float=0.1, default_ciping_len:int=10

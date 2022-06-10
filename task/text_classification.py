@@ -2,6 +2,7 @@
 from core.base.task.base import Base_Task
 from core.decorator.common import singleton
 from core.base.preprocessing.base import BaseUtil_Handle_Text
+from core.decorator.common import stopwatch
 from preprocessing.pre_text.cleaner import Cleaner_Text
 from static.word_dicts.financial_word_dic import TITLE_TAG
 import os
@@ -67,3 +68,4 @@ class Text_Classification_Task(Base_Task, BaseUtil_Handle_Text):
             # 若无何时标签通通归类为行情
             res_tag_lis.add(default_tag)
         return res_tag_lis
+
